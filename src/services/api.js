@@ -1,8 +1,14 @@
 import axios from 'axios';
 
+// Dynamically target production Render API URL or local proxy
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.MODE === 'production' 
+    ? 'https://library-management-server-dzx8.onrender.com/api' 
+    : '/api');
+
 // Create configured Axios instance
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }
