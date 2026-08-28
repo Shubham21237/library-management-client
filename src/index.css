@@ -4,34 +4,34 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 font-sans;
+    @apply bg-slate-50 text-slate-900 font-sans;
   }
 }
 
-/* Custom glassmorphic container styles */
+/* Light Aesthetic Glassmorphic Classes */
 .glass-card {
-  @apply bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl shadow-xl;
+  @apply bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200;
 }
 
 .glass-nav {
-  @apply bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/80 sticky top-0 z-50;
+  @apply bg-white/80 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-40;
 }
 
-/* Smooth custom scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
