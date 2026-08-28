@@ -85,8 +85,8 @@ export const BookDetails = () => {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">Loading book specifications...</p>
+        <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+        <p className="text-xs text-slate-400 font-medium">Loading book specifications...</p>
       </div>
     );
   }
@@ -94,8 +94,8 @@ export const BookDetails = () => {
   if (!book) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">Book Not Found</h2>
-        <Link to="/catalog" className="text-indigo-600 hover:underline text-xs font-bold">
+        <h2 className="text-2xl font-bold text-white">Book Not Found</h2>
+        <Link to="/catalog" className="text-indigo-400 hover:underline text-xs font-bold">
           Return to Catalog
         </Link>
       </div>
@@ -108,7 +108,7 @@ export const BookDetails = () => {
       {/* Back Button */}
       <Link
         to="/catalog"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors shadow-sm"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-bold transition-colors shadow-sm"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Book Catalog
@@ -118,7 +118,7 @@ export const BookDetails = () => {
         
         {/* Left Column: Cover & QR Code */}
         <div className="space-y-6">
-          <div className="glass-card overflow-hidden p-3 bg-white shadow-md">
+          <div className="glass-card overflow-hidden p-3 bg-slate-900 shadow-md border-slate-800">
             <img
               src={book.coverImage?.url}
               alt={book.title}
@@ -128,15 +128,15 @@ export const BookDetails = () => {
 
           {/* Generated QR Code Card */}
           {book.qrCodeUrl && (
-            <div className="glass-card p-5 text-center space-y-3 bg-white">
-              <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                <QrCode className="w-4 h-4 text-emerald-600" />
+            <div className="glass-card p-5 text-center space-y-3 bg-slate-900 border-slate-800">
+              <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <QrCode className="w-4 h-4 text-emerald-400" />
                 Book Scan Code (ISBN)
               </div>
-              <div className="bg-slate-50 p-3 rounded-xl inline-block border border-slate-200">
+              <div className="bg-white p-3 rounded-xl inline-block border border-slate-800">
                 <img src={book.qrCodeUrl} alt="ISBN QR Code" className="w-32 h-32 mx-auto" />
               </div>
-              <p className="text-[11px] font-mono text-slate-500">ISBN: {book.isbn}</p>
+              <p className="text-[11px] font-mono text-slate-400">ISBN: {book.isbn}</p>
             </div>
           )}
         </div>
@@ -146,22 +146,22 @@ export const BookDetails = () => {
           
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">
                 {book.category?.name || 'General'}
               </span>
               {book.availableCopies > 0 ? (
-                <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">
                   {book.availableCopies} Available
                 </span>
               ) : (
-                <span className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
                   Out of Stock ({book.reservationQueue?.length || 0} in Queue)
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl font-extrabold text-slate-900">{book.title}</h1>
-            <p className="text-base text-slate-600 font-medium">by <span className="font-bold text-slate-900">{book.author}</span></p>
+            <h1 className="text-3xl font-extrabold text-white">{book.title}</h1>
+            <p className="text-base text-slate-400 font-medium">by <span className="font-bold text-white">{book.author}</span></p>
           </div>
 
           {/* Feedback Alerts */}
@@ -169,10 +169,10 @@ export const BookDetails = () => {
             <div
               className={`p-4 rounded-xl text-xs font-bold flex items-center gap-2 ${
                 feedback.type === 'success'
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                   : feedback.type === 'warning'
-                  ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                  : 'bg-rose-50 text-rose-700 border border-rose-200'
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
               }`}
             >
               <span>{feedback.msg}</span>
@@ -180,38 +180,38 @@ export const BookDetails = () => {
           )}
 
           {/* Book Specs Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-100/80 border border-slate-200">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-900 border border-slate-800">
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Publisher</div>
-              <div className="text-xs font-bold text-slate-900 mt-0.5">{book.publisher || 'N/A'}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Publisher</div>
+              <div className="text-xs font-bold text-white mt-0.5">{book.publisher || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Published Date</div>
-              <div className="text-xs font-bold text-slate-900 mt-0.5">{book.publishedDate || 'N/A'}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Published Date</div>
+              <div className="text-xs font-bold text-white mt-0.5">{book.publishedDate || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Page Count</div>
-              <div className="text-xs font-bold text-slate-900 mt-0.5">{book.pageCount || 'N/A'} Pages</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Page Count</div>
+              <div className="text-xs font-bold text-white mt-0.5">{book.pageCount || 'N/A'} Pages</div>
             </div>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Shelf Location</div>
-              <div className="text-xs font-bold text-indigo-600 mt-0.5">{book.shelfLocation || 'Shelf A1'}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Shelf Location</div>
+              <div className="text-xs font-bold text-indigo-400 mt-0.5">{book.shelfLocation || 'Shelf A1'}</div>
             </div>
           </div>
 
           {/* Book Overview */}
-          <div className="glass-card p-6 space-y-3 bg-white">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Synopsis / Description</h3>
-            <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line font-medium">
+          <div className="glass-card p-6 space-y-3 bg-slate-900 border-slate-800">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Synopsis / Description</h3>
+            <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-line font-medium">
               {book.description || 'No detailed description available for this catalog entry.'}
             </p>
           </div>
 
           {/* Feature #5: AI Summarizer Box */}
-          <div className="glass-card p-6 border-indigo-200 bg-indigo-50/30 space-y-4">
+          <div className="glass-card p-6 border-indigo-500/20 bg-indigo-500/5 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-indigo-700 font-bold text-xs">
-                <Sparkles className="w-4 h-4 text-indigo-600" />
+              <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs">
+                <Sparkles className="w-4 h-4 text-indigo-400" />
                 AI 1-Minute Key Takeaways (Google Gemini)
               </div>
 
@@ -226,18 +226,18 @@ export const BookDetails = () => {
             </div>
 
             {aiSummary && (
-              <div className="p-4 rounded-xl bg-white border border-indigo-200 space-y-2 animate-in fade-in duration-300 shadow-sm">
+              <div className="p-4 rounded-xl bg-slate-950 border border-indigo-500/20 space-y-2 animate-in fade-in duration-300 shadow-sm">
                 {Array.isArray(aiSummary) ? (
                   <ul className="space-y-2">
                     {aiSummary.map((bullet, idx) => (
-                      <li key={idx} className="text-xs text-slate-800 font-medium flex items-start gap-2">
-                        <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                      <li key={idx} className="text-xs text-slate-200 font-medium flex items-start gap-2">
+                        <span className="text-indigo-400 font-bold mt-0.5">•</span>
                         <span>{bullet}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-slate-800 leading-relaxed font-medium">{aiSummary}</p>
+                  <p className="text-xs text-slate-200 leading-relaxed font-medium">{aiSummary}</p>
                 )}
               </div>
             )}
@@ -250,8 +250,8 @@ export const BookDetails = () => {
               disabled={requestLoading}
               className={`flex-grow py-3.5 px-6 font-bold text-xs rounded-xl transition-all shadow-md flex items-center justify-center gap-2 ${
                 book.availableCopies > 0
-                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/20'
-                  : 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/20'
+                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
+                  : 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/30'
               }`}
             >
               {requestLoading ? (

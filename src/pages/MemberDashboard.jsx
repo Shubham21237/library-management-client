@@ -122,61 +122,61 @@ export const MemberDashboard = () => {
     <div className="max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
       {/* User Header & Reading Streak */}
-      <div className="glass-card p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border-indigo-100 bg-white">
+      <div className="glass-card p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border-slate-800 bg-slate-900/90">
         <div className="flex items-center gap-5">
           <img
             src={user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'}
             alt={user?.name}
-            className="w-16 h-16 rounded-2xl object-cover ring-4 ring-indigo-500/10 shadow-md"
+            className="w-16 h-16 rounded-2xl object-cover ring-4 ring-indigo-500/20 shadow-md"
           />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-extrabold text-slate-900">{user?.name}</h1>
-              <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 text-[10px] font-bold uppercase">
+              <h1 className="text-2xl font-extrabold text-white">{user?.name}</h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold uppercase">
                 Student
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">{user?.email}</p>
+            <p className="text-xs text-slate-400 mt-1">{user?.email}</p>
           </div>
         </div>
 
         {/* Reading Streak & Badges */}
         <div className="flex items-center gap-4">
-          <div className="glass-card px-5 py-3 text-center border-amber-200 bg-amber-50/50">
-            <div className="flex items-center justify-center gap-1.5 text-amber-700 text-xs font-bold uppercase tracking-wider">
+          <div className="glass-card px-5 py-3 text-center border-amber-500/20 bg-amber-500/5">
+            <div className="flex items-center justify-center gap-1.5 text-amber-400 text-xs font-bold uppercase tracking-wider">
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500" /> Reading Streak
             </div>
-            <div className="text-2xl font-extrabold text-slate-900 mt-0.5">
-              {user?.readingStreak?.currentStreak || 0} <span className="text-xs text-slate-500">Months</span>
+            <div className="text-2xl font-extrabold text-white mt-0.5">
+              {user?.readingStreak?.currentStreak || 0} <span className="text-xs text-slate-400">Months</span>
             </div>
           </div>
 
-          <div className="glass-card px-5 py-3 text-center border-indigo-200 bg-indigo-50/50">
-            <div className="flex items-center justify-center gap-1.5 text-indigo-700 text-xs font-bold uppercase tracking-wider">
-              <Award className="w-4 h-4 text-indigo-600" /> Badges Earned
+          <div className="glass-card px-5 py-3 text-center border-indigo-500/20 bg-indigo-500/5">
+            <div className="flex items-center justify-center gap-1.5 text-indigo-400 text-xs font-bold uppercase tracking-wider">
+              <Award className="w-4 h-4 text-indigo-400" /> Badges Earned
             </div>
-            <div className="text-2xl font-extrabold text-slate-900 mt-0.5">
-              {user?.badges?.length || 1} <span className="text-xs text-slate-500">Badges</span>
+            <div className="text-2xl font-extrabold text-white mt-0.5">
+              {user?.badges?.length || 1} <span className="text-xs text-slate-400">Badges</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* AI Recommendation Box */}
-      <div className="glass-card p-6 border-indigo-200 space-y-4">
+      <div className="glass-card p-6 border-indigo-500/20 bg-indigo-500/5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
               AI Recommended Books For You (Google Gemini)
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Tailored based on your borrowing history & reading habits</p>
+            <p className="text-xs text-slate-400 mt-0.5">Tailored based on your borrowing history & reading habits</p>
           </div>
 
           <button
             onClick={handleFetchAiRecommendations}
             disabled={aiLoading}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-indigo-600/20"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-indigo-600/30"
           >
             {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
             Get AI Recommendations
@@ -189,12 +189,12 @@ export const MemberDashboard = () => {
               <Link
                 key={book._id}
                 to={`/books/${book._id}`}
-                className="glass-card p-3 flex items-center gap-3 hover:border-indigo-300 transition-colors"
+                className="glass-card p-3 flex items-center gap-3 hover:border-indigo-500/40 transition-colors"
               >
                 <img src={book.coverImage?.url} alt={book.title} className="w-12 h-16 object-cover rounded-lg shadow-sm" />
                 <div className="overflow-hidden">
-                  <h4 className="text-xs font-bold text-slate-900 truncate">{book.title}</h4>
-                  <p className="text-[11px] text-slate-500 truncate">by {book.author}</p>
+                  <h4 className="text-xs font-bold text-white truncate">{book.title}</h4>
+                  <p className="text-[11px] text-slate-400 truncate">by {book.author}</p>
                 </div>
               </Link>
             ))}
@@ -204,16 +204,16 @@ export const MemberDashboard = () => {
 
       {/* Active Borrowed Books Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-indigo-600" />
+        <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+          <BookOpen className="w-5 h-5 text-indigo-400" />
           Currently Borrowed & Active Books ({activeBorrows.length})
         </h2>
 
         {activeBorrows.length === 0 ? (
           <div className="glass-card p-8 text-center space-y-2">
-            <CheckCircle className="w-10 h-10 text-slate-400 mx-auto" />
-            <p className="text-xs text-slate-500 font-medium">You currently have no active borrowed books.</p>
-            <Link to="/catalog" className="text-xs font-bold text-indigo-600 hover:underline">
+            <CheckCircle className="w-10 h-10 text-slate-600 mx-auto" />
+            <p className="text-xs text-slate-400 font-medium">You currently have no active borrowed books.</p>
+            <Link to="/catalog" className="text-xs font-bold text-indigo-400 hover:underline">
               Browse Catalog to Borrow
             </Link>
           </div>
@@ -230,26 +230,26 @@ export const MemberDashboard = () => {
                   <div className="space-y-1">
                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                       tx.status === 'OVERDUE'
-                        ? 'bg-rose-100 text-rose-700 border border-rose-200'
-                        : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                     }`}>
                       {tx.status}
                     </span>
-                    <h3 className="text-sm font-bold text-slate-900 line-clamp-1">{tx.book?.title}</h3>
-                    <p className="text-xs text-slate-500">by {tx.book?.author}</p>
+                    <h3 className="text-sm font-bold text-white line-clamp-1">{tx.book?.title}</h3>
+                    <p className="text-xs text-slate-400">by {tx.book?.author}</p>
 
-                    <div className="text-xs text-slate-500 pt-1">
-                      Due Date: <span className="font-bold text-slate-900">{tx.dueDate ? new Date(tx.dueDate).toLocaleDateString() : 'N/A'}</span>
+                    <div className="text-xs text-slate-400 pt-1">
+                      Due Date: <span className="font-bold text-white">{tx.dueDate ? new Date(tx.dueDate).toLocaleDateString() : 'N/A'}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Overdue Fine Box */}
                 {tx.fineAmount > 0 && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between">
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-between">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-rose-700">Accumulated Overdue Fine</div>
-                      <div className="text-base font-extrabold text-slate-900">RS.{tx.fineAmount}</div>
+                      <div className="text-[10px] font-bold uppercase text-rose-400">Accumulated Overdue Fine</div>
+                      <div className="text-base font-extrabold text-white">RS.{tx.fineAmount}</div>
                     </div>
 
                     {!tx.finePaid ? (
@@ -263,10 +263,10 @@ export const MemberDashboard = () => {
                       </button>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-emerald-700">Fine Paid</span>
+                        <span className="text-xs font-bold text-emerald-400">Fine Paid</span>
                         <button
                           onClick={() => handleDownloadReceipt(tx)}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 border border-slate-300"
+                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 border border-slate-700"
                         >
                           <Download className="w-3.5 h-3.5" /> PDF
                         </button>
