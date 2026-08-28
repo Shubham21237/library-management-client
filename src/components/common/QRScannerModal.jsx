@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { useNavigate } from 'react-router-dom';
 import { X, QrCode, CheckCircle } from 'lucide-react';
@@ -45,49 +46,50 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md w-screen h-screen top-0 left-0">
-      <div className="glass-card w-full max-w-md p-6 relative animate-in fade-in zoom-in duration-200 shadow-2xl bg-slate-900 border-slate-800">
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md w-screen h-screen min-h-screen">
+      <div className="glass-card w-full max-w-md p-6 relative animate-in fade-in zoom-in duration-200 shadow-2xl bg-white border-slate-200 text-slate-900 my-auto">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
             <QrCode className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Live QR Code Scanner</h3>
-            <p className="text-xs text-slate-400">Position camera over Book QR or Student ID</p>
+            <h3 className="text-lg font-bold text-slate-900">Live QR Code Scanner</h3>
+            <p className="text-xs text-slate-500">Position camera over Book QR or Student ID</p>
           </div>
         </div>
 
         {/* Scanner Feed Container */}
-        <div className="bg-slate-950 rounded-xl p-2 border border-slate-800 overflow-hidden min-h-[300px] flex items-center justify-center">
+        <div className="bg-slate-100 rounded-xl p-2 border border-slate-200 overflow-hidden min-h-[300px] flex items-center justify-center">
           {scanResult ? (
             <div className="text-center p-6 space-y-3">
-              <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
-              <h4 className="text-base font-bold text-white">QR Code Scanned!</h4>
-              <p className="text-xs font-mono bg-slate-900 px-3 py-2 rounded text-emerald-400 border border-emerald-500/20 break-all shadow-sm">
+              <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
+              <h4 className="text-base font-bold text-slate-900">QR Code Scanned!</h4>
+              <p className="text-xs font-mono bg-white px-3 py-2 rounded text-emerald-700 border border-emerald-200 break-all shadow-sm">
                 {scanResult}
               </p>
-              <p className="text-xs text-slate-400">Redirecting to book catalog...</p>
+              <p className="text-xs text-slate-500">Redirecting to book catalog...</p>
             </div>
           ) : (
-            <div id="qr-reader" className="w-full text-slate-300"></div>
+            <div id="qr-reader" className="w-full text-slate-800"></div>
           )}
         </div>
 
-        <p className="text-xs text-center text-slate-400 mt-4">
+        <p className="text-xs text-center text-slate-500 mt-4">
           💡 Works with laptop webcams & mobile phone cameras.
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
