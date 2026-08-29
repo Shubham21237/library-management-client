@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useNavigate } from 'react-router-dom';
 import { X, QrCode, Barcode, CheckCircle, Scan } from 'lucide-react';
 
@@ -16,7 +16,6 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
       if (scannerRef.current) {
         scannerRef.current.clear().catch(() => {});
       }
-      // Stop all active browser WebRTC video stream tracks
       const videoElements = document.querySelectorAll('video');
       videoElements.forEach(video => {
         if (video.srcObject && video.srcObject.getTracks) {
@@ -41,16 +40,24 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
 
     setScanResult(null);
 
-    const boxDimensions = scannerMode === 'qr'
-      ? { width: 250, height: 250 }
-      : { width: 320, height: 160 };
+    // Support ALL 2D QR Codes + 1D Barcodes simultaneously in a single active stream
+    const formatsToSupport = [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E
+    ];
 
     const scanner = new Html5QrcodeScanner(
       'qr-reader',
       {
-        fps: 12,
-        qrbox: boxDimensions,
-        aspectRatio: 1.0
+        fps: 15,
+        qrbox: { width: 280, height: 200 },
+        formatsToSupport: formatsToSupport,
+        rememberLastUsedCamera: true
       },
       false
     );
@@ -63,7 +70,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
         setTimeout(() => {
           navigate(`/catalog?search=${encodeURIComponent(decodedText)}`);
           onClose();
-        }, 1500);
+        }, 1200);
       },
       () => {}
     );
@@ -71,12 +78,9 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
     scannerRef.current = scanner;
 
     return () => {
-      // Soft cleanup for mode switching so camera doesn't turn off
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(() => {});
-      }
+      stopAllCameraTracks();
     };
-  }, [isOpen, scannerMode, navigate, onClose]);
+  }, [isOpen, navigate, onClose]); // ONLY re-run when modal opens/closes, NOT when toggling mode!
 
   if (!isOpen) return null;
 
@@ -135,7 +139,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Scanner Feed Container */}
-        <div className="bg-slate-100 rounded-xl p-2 border border-slate-200 overflow-hidden min-h-[300px] flex items-center justify-center">
+        <div className="bg-slate-100 rounded-xl p-2 border border-slate-200 overflow-hidden min-h-[300px] flex items-center justify-center relative">
           {scanResult ? (
             <div className="text-center p-6 space-y-3">
               <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
