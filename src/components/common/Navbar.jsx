@@ -5,7 +5,7 @@ import {
   BookOpen,
   LayoutDashboard,
   ShieldAlert,
-  QrCode,
+  Scan,
   LogOut,
   Flame,
   Menu,
@@ -76,14 +76,14 @@ export const Navbar = ({ onOpenScanner }) => {
               </Link>
             )}
 
-            {/* Webcam QR Scanner Trigger Button */}
+            {/* Webcam QR / Barcode Quick Scan Trigger Button */}
             {user && (
               <button
                 onClick={onOpenScanner}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors"
               >
-                <QrCode className="w-4 h-4 text-emerald-600" />
-                Scan QR Code
+                <Scan className="w-4 h-4 text-emerald-600" />
+                Quick Scan
               </button>
             )}
           </div>

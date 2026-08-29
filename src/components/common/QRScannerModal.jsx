@@ -2,13 +2,39 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { useNavigate } from 'react-router-dom';
-import { X, QrCode, Barcode, CheckCircle } from 'lucide-react';
+import { X, QrCode, Barcode, CheckCircle, Scan } from 'lucide-react';
 
 export const QRScannerModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [scanResult, setScanResult] = useState(null);
   const [scannerMode, setScannerMode] = useState('qr'); // 'qr' or 'barcode'
   const scannerRef = useRef(null);
+
+  // Explicit Hardware Camera Track Cleanup
+  const stopAllCameraTracks = () => {
+    try {
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(() => {});
+      }
+      // Stop all active browser WebRTC video stream tracks
+      const videoElements = document.querySelectorAll('video');
+      videoElements.forEach(video => {
+        if (video.srcObject && video.srcObject.getTracks) {
+          video.srcObject.getTracks().forEach(track => {
+            track.stop();
+          });
+          video.srcObject = null;
+        }
+      });
+    } catch (err) {
+      console.error('Error stopping camera hardware stream', err);
+    }
+  };
+
+  const handleModalClose = () => {
+    stopAllCameraTracks();
+    onClose();
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -32,7 +58,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
     scanner.render(
       (decodedText) => {
         setScanResult(decodedText);
-        scanner.clear();
+        stopAllCameraTracks();
 
         setTimeout(() => {
           navigate(`/catalog?search=${encodeURIComponent(decodedText)}`);
@@ -45,9 +71,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
     scannerRef.current = scanner;
 
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(err => console.error('Error clearing scanner', err));
-      }
+      stopAllCameraTracks();
     };
   }, [isOpen, scannerMode, navigate, onClose]);
 
@@ -59,7 +83,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
         
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleModalClose}
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -68,13 +92,13 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
-            {scannerMode === 'qr' ? <QrCode className="w-5 h-5" /> : <Barcode className="w-5 h-5" />}
+            <Scan className="w-5 h-5" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900">
-              {scannerMode === 'qr' ? 'Live QR Code Scanner' : 'Live 1D Barcode Scanner'}
+              Quick Scan ({scannerMode === 'qr' ? '2D QR Code' : '1D ISBN Barcode'})
             </h3>
-            <p className="text-xs text-slate-500">Scan Student ID or Book Barcode</p>
+            <p className="text-xs text-slate-500">Scan Student ID or Physical Book Barcode</p>
           </div>
         </div>
 
@@ -124,7 +148,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
         </div>
 
         <p className="text-xs text-center text-slate-500 mt-4">
-          💡 Mode switch automatically adjusts scanning dimensions for QR or Barcodes.
+          💡 Camera hardware automatically stops the exact instant you close this scanner.
         </p>
       </div>
     </div>,
