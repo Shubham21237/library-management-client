@@ -10,7 +10,7 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
   const [scannerMode, setScannerMode] = useState('qr'); // 'qr' or 'barcode'
   const scannerRef = useRef(null);
 
-  // Explicit Hardware Camera Track Cleanup
+  // Explicit Hardware Camera Track Cleanup (Only called when closing modal or on scan success)
   const stopAllCameraTracks = () => {
     try {
       if (scannerRef.current) {
@@ -71,7 +71,10 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
     scannerRef.current = scanner;
 
     return () => {
-      stopAllCameraTracks();
+      // Soft cleanup for mode switching so camera doesn't turn off
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(() => {});
+      }
     };
   }, [isOpen, scannerMode, navigate, onClose]);
 
@@ -147,9 +150,6 @@ export const QRScannerModal = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        <p className="text-xs text-center text-slate-500 mt-4">
-          💡 Camera hardware automatically stops the exact instant you close this scanner.
-        </p>
       </div>
     </div>,
     document.body
