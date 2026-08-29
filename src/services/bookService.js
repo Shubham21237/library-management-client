@@ -43,3 +43,8 @@ export const createCategoryApi = async (categoryData) => {
   const response = await API.post('/categories', categoryData);
   return response.data;
 };
+
+export const addBookReviewApi = async (id, reviewData) => {
+  const response = await API.post(`/books/${id}/reviews`, reviewData);
+  return response.data;
+};

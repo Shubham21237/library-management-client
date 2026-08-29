@@ -10,7 +10,8 @@ import {
   Clock,
   Loader2,
   MapPin,
-  Layers
+  Layers,
+  Star
 } from 'lucide-react';
 
 export const BookCatalog = () => {
@@ -213,6 +214,15 @@ export const BookCatalog = () => {
                     </span>
                   )}
                 </div>
+
+                {/* Star Rating Badge Overlay */}
+                {book.averageRating > 0 && (
+                  <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-amber-400 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-sm border border-slate-700">
+                    <Star className="w-3 h-3 fill-amber-400" />
+                    <span>{book.averageRating.toFixed(1)}</span>
+                    <span className="text-slate-400 text-[9px]">({book.numReviews})</span>
+                  </div>
+                )}
               </div>
 
               {/* Book Details */}

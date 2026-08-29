@@ -20,6 +20,7 @@ import {
   Plus,
   Sparkles,
   Loader2,
+  FileText,
   X
 } from 'lucide-react';
 
@@ -46,7 +47,8 @@ export const AdminDashboard = () => {
     pageCount: 0,
     totalCopies: 1,
     shelfLocation: 'Shelf A1',
-    coverImageUrl: ''
+    coverImageUrl: '',
+    pdfUrl: ''
   });
   const [submitLoading, setSubmitLoading] = useState(false);
   const [modalFeedback, setModalFeedback] = useState({ type: '', msg: '' });
@@ -364,7 +366,7 @@ export const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Feature #1 Modal: Rendered via Portal directly to document.body to cover viewport 100% with NO top cutoff */}
+      {/* Feature #1 Modal: Rendered via Portal directly to document.body */}
       {isAddBookModalOpen && ReactDOM.createPortal(
         <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md w-screen h-screen min-h-screen overflow-y-auto">
           <div className="glass-card w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl bg-white border-slate-200 text-slate-900 my-auto">
@@ -499,6 +501,20 @@ export const AdminDashboard = () => {
                     className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900"
                   />
                 </div>
+              </div>
+
+              {/* PDF E-Book Download URL Field */}
+              <div>
+                <label className="block text-slate-600 mb-1 flex items-center gap-1.5 font-bold text-indigo-700">
+                  <FileText className="w-3.5 h-3.5" /> PDF E-Book Document URL (Digital Reader Copy)
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://example.com/books/sample-ebook.pdf"
+                  value={bookFormData.pdfUrl}
+                  onChange={(e) => setBookFormData({ ...bookFormData, pdfUrl: e.target.value })}
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900"
+                />
               </div>
 
               <div>

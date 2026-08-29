@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getBookByIdApi } from '../services/bookService';
+import { getBookByIdApi, addBookReviewApi } from '../services/bookService';
 import { requestBookApi } from '../services/transactionService';
 import { summarizeBookApi } from '../services/aiService';
 import { useAuth } from '../hooks/useAuth';
@@ -8,7 +8,13 @@ import {
   Sparkles,
   ArrowLeft,
   Loader2,
-  QrCode
+  QrCode,
+  FileText,
+  Star,
+  MessageSquare,
+  Send,
+  User,
+  ExternalLink
 } from 'lucide-react';
 
 export const BookDetails = () => {
@@ -22,17 +28,24 @@ export const BookDetails = () => {
   const [aiSummary, setAiSummary] = useState(null);
   const [feedback, setFeedback] = useState({ type: '', msg: '' });
 
+  // Review Form State
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewFeedback, setReviewFeedback] = useState({ type: '', msg: '' });
+
+  const fetchBook = async () => {
+    try {
+      const res = await getBookByIdApi(id);
+      if (res.status === 'success') setBook(res.data);
+    } catch (err) {
+      console.error('Error fetching book details', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchBook = async () => {
-      try {
-        const res = await getBookByIdApi(id);
-        if (res.status === 'success') setBook(res.data);
-      } catch (err) {
-        console.error('Error fetching book details', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBook();
   }, [id]);
 
@@ -82,6 +95,37 @@ export const BookDetails = () => {
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      setReviewFeedback({ type: 'error', msg: 'Please sign in to post a review.' });
+      return;
+    }
+    if (!comment.trim()) {
+      setReviewFeedback({ type: 'error', msg: 'Please write a comment before submitting.' });
+      return;
+    }
+
+    setReviewLoading(true);
+    setReviewFeedback({ type: '', msg: '' });
+
+    try {
+      const res = await addBookReviewApi(book._id, { rating, comment });
+      if (res.status === 'success') {
+        setReviewFeedback({ type: 'success', msg: 'Review submitted successfully!' });
+        setComment('');
+        fetchBook();
+      }
+    } catch (err) {
+      setReviewFeedback({
+        type: 'error',
+        msg: err.response?.data?.message || 'Failed to submit review.'
+      });
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
@@ -102,6 +146,8 @@ export const BookDetails = () => {
     );
   }
 
+  const roundedAvgRating = (book.averageRating || 0).toFixed(1);
+
   return (
     <div className="max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
@@ -116,7 +162,7 @@ export const BookDetails = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        {/* Left Column: Cover & QR Code */}
+        {/* Left Column: Cover, PDF Button & QR Code */}
         <div className="space-y-6">
           <div className="glass-card overflow-hidden p-3 bg-white shadow-md">
             <img
@@ -125,6 +171,24 @@ export const BookDetails = () => {
               className="w-full h-96 object-cover rounded-xl shadow-md"
             />
           </div>
+
+          {/* Digital PDF E-Book Download & Reader Button */}
+          {book.pdfUrl ? (
+            <a
+              href={book.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              Read / Download Digital PDF
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          ) : (
+            <div className="p-3 rounded-xl bg-slate-100 text-center text-xs font-medium text-slate-500 border border-slate-200">
+              📄 Physical Hardcopy Book (Digital PDF copy not uploaded)
+            </div>
+          )}
 
           {/* Generated QR Code Card */}
           {book.qrCodeUrl && (
@@ -141,11 +205,11 @@ export const BookDetails = () => {
           )}
         </div>
 
-        {/* Right Column: Book Metadata & AI Summarizer */}
+        {/* Right Column: Book Metadata & Reviews */}
         <div className="md:col-span-2 space-y-6">
           
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span className="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-bold uppercase tracking-wider">
                 {book.category?.name || 'General'}
               </span>
@@ -158,6 +222,13 @@ export const BookDetails = () => {
                   Out of Stock ({book.reservationQueue?.length || 0} in Queue)
                 </span>
               )}
+
+              {/* Star Rating Badge */}
+              <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold text-amber-700 ml-auto">
+                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                <span>{roundedAvgRating} / 5.0</span>
+                <span className="text-slate-400 font-normal">({book.numReviews || 0} reviews)</span>
+              </div>
             </div>
 
             <h1 className="text-3xl font-extrabold text-slate-900">{book.title}</h1>
@@ -244,7 +315,7 @@ export const BookDetails = () => {
           </div>
 
           {/* Action Bar */}
-          <div className="pt-4 flex gap-4">
+          <div className="pt-2 flex gap-4">
             <button
               onClick={handleRequestBorrow}
               disabled={requestLoading}
@@ -262,6 +333,109 @@ export const BookDetails = () => {
                 'Join Reservation Waiting Queue'
               )}
             </button>
+          </div>
+
+          {/* Community Ratings & Reviews Section */}
+          <div className="glass-card p-6 space-y-6 bg-white border-slate-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-indigo-600" />
+                Community Ratings & Reviews ({book.numReviews || 0})
+              </h3>
+              
+              <div className="flex items-center gap-1.5 font-bold text-slate-900 text-sm">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span>{roundedAvgRating} out of 5.0</span>
+              </div>
+            </div>
+
+            {/* Submit Review Form */}
+            {user ? (
+              <form onSubmit={handleReviewSubmit} className="space-y-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h4 className="text-xs font-bold text-slate-900">Leave Your Rating & Review</h4>
+                
+                {reviewFeedback.msg && (
+                  <div className={`p-3 rounded-lg text-xs font-bold ${
+                    reviewFeedback.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'
+                  }`}>
+                    {reviewFeedback.msg}
+                  </div>
+                )}
+
+                {/* Star Rating Selector */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-600 font-medium">Your Rating:</span>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        className="p-1 text-amber-500 hover:scale-110 transition-transform"
+                      >
+                        <Star className={`w-5 h-5 ${star <= rating ? 'fill-amber-500' : 'text-slate-300'}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Comment Box */}
+                <textarea
+                  rows={2}
+                  required
+                  placeholder="Share your thoughts on this book with fellow students..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600"
+                />
+
+                <button
+                  type="submit"
+                  disabled={reviewLoading}
+                  className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-2"
+                >
+                  {reviewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  Submit Review
+                </button>
+              </form>
+            ) : (
+              <div className="p-4 rounded-xl bg-slate-50 text-center text-xs text-slate-500 font-medium border border-slate-200">
+                Please <Link to="/login" className="text-indigo-600 font-bold hover:underline">sign in</Link> to write a community review.
+              </div>
+            )}
+
+            {/* Reviews List */}
+            <div className="space-y-4 pt-2">
+              {(!book.reviews || book.reviews.length === 0) ? (
+                <p className="text-xs text-slate-500 text-center py-4">No community reviews yet. Be the first to review this book!</p>
+              ) : (
+                book.reviews.map((rev) => (
+                  <div key={rev._id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={rev.userAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'}
+                          alt={rev.userName}
+                          className="w-7 h-7 rounded-full object-cover"
+                        />
+                        <span className="text-xs font-bold text-slate-900">{rev.userName}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map(s => (
+                          <Star key={s} className={`w-3.5 h-3.5 ${s <= rev.rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`} />
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">{rev.comment}</p>
+                    <div className="text-[10px] text-slate-400">
+                      {new Date(rev.createdAt || Date.now()).toLocaleDateString()}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
         </div>
